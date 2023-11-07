@@ -1,30 +1,64 @@
 pipeline {
-    agent any
-    tools{
-        ansible 'ansible'
-    }
-    stages {
-        stage('cleanws') {
-            steps {
-                cleanWs()
-            }
-        }
-        stage('checkout'){
-            steps{
-                git branch: 'main', url: 'https://github.com/Aj7Ay/ANSIBLE.git'
-            }
-        }
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
-            }
-        }    
-        stage('ansible provision') {
-          steps {
-             // To suppress warnings when you execute the playbook    
-             sh "pip install --upgrade requests==2.20.1"
-             ansiblePlaybook playbook: 'ec2.yaml' 
-            }
-        }
-    }
+    agent any
+    
+    environment {
+        // Define environment variables here
+        // For example: 
+        // MY_ENV_VARIABLE = 'some_value'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Check out your source code repository
+                // Use SCM tools like Git or SVN
+                // Example for Git:
+                // git branch: 'main', credentialsId: 'your_git_credentials', url: 'https://github.com/your/repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build your application here
+                // For example, using a build tool like Maven or Gradle
+                // Example for Maven:
+                // sh 'mvn clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run your tests
+                // For example, using a testing framework like JUnit
+                // Example:
+                // sh 'java -jar your-test-runner.jar'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Deploy your application to the target environment
+                // This could involve copying artifacts to a server, container deployment, etc.
+                // Example:
+                // sh 'kubectl apply -f deployment.yaml'
+            }
+        }
+
+        stage('Post-Deployment Actions') {
+            steps {
+                // Execute post-deployment actions such as database migrations, notifications, etc.
+            }
+        }
+    }
+
+    post {
+        success {
+            // Actions to be taken on a successful build
+            // For example, trigger notifications, clean up resources, or promote the build
+        }
+        failure {
+            // Actions to be taken on a failed build
+            // For example, notify the team or roll back the deployment
+        }
+    }
 }
