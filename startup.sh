@@ -1,4 +1,6 @@
 #!/bin/bash
+#Script to install needs of a servers
+#Node.js 16. Change version if needed
 sudo apt update -y
 sudo touch /etc/apt/keyrings/adoptium.asc
 sudo wget -O /etc/apt/keyrings/adoptium.asc https://packages.adoptium.net/artifactory/api/gpg/key/public
@@ -7,7 +9,6 @@ sudo apt update -y
 sudo apt install temurin-17-jdk -y
 /usr/bin/java --version
 
-sqp_45e8752e2f0636f18b67629a2243b9cc5a4e0c05
 # Install Trivy
 sudo apt-get install wget apt-transport-https gnupg lsb-release -y
 wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
@@ -39,3 +40,4 @@ curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo gpg --dea
 echo "deb [signed-by=/usr/share/keyrings/nodesource-archive-keyring.gpg] https://deb.nodesource.com/node_16.x focal main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 sudo apt update
 sudo apt install -y nodejs
+
