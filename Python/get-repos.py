@@ -175,7 +175,7 @@ def get_search_results(search_url):
 
 def main():
 
-    search_url = 'https://api.github.com/search/code?q=org:one-thd+one-thd/actions-paved-road/.github/workflows&per_page=100'
+    search_url = 'https://api.github.com/search/code?q=org:<#######>'
     # get all teams
     # team_list = get_org_teams(org_name)
     repo_list = []
