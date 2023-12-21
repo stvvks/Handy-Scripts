@@ -1,0 +1,32 @@
+name: Example workflow
+
+on:
+  workflow_dispatch:
+
+
+env:
+
+
+jobs:
+  docker-setup:
+  runs-on: ubuntu-latest
+# Best Practice is to pin the version you want
+  steps:
+  - name: Docker Build
+    run: docker ps
+
+  - name: Docker next steps
+    run: docker ls
+
+  deployment:
+  concurrency:
+    group: production-deployment
+    cancel-in-progress: true
+    # Concurrency will cancel any production workflow in progress so only 1 is running at a time
+    needs: docker-setup
+    runs-on: ubuntu-latest
+    steps:
+    - name: Docker run
+      run: docker run
+
+
