@@ -23,6 +23,8 @@ jobs:
     group: production-deployment
     cancel-in-progress: true
     # Concurrency will cancel any production workflow in progress so only 1 is running at a time
+    # If false for 'cancel-in-progress' it will wait til other workflow is finished
+
     needs: docker-setup
     runs-on: ubuntu-latest
     steps:
