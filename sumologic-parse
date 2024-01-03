@@ -1,0 +1,7 @@
+# Query to sort lambda mem siz, billed duration, and max mem on Sumologic
+
+(_source=CloudWatch)
+| parse "REPORT RequestId: *Billed Durations: * ms//tMemory Size: * MB//tMax Memory Used: * MB"
+as request,billed_duration,memory,max_mem
+| where logGroup matches '/aws/lambda*" 
+| where messages matches "REPORT RequestId*"
