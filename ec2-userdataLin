@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#User data aka startup script for ec2 instances LINUX INSTANCE
+
+yum update -y
+yum install -y httpd
+systemctl start httpd
+system enable httpd
+echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
