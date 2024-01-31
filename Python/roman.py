@@ -1,3 +1,6 @@
+# Roman numerals. Mapping letters to the number, ans being initialized to 0, will accumlate final value of roman string
+#
+
 class Solution:
     def romanToInt(self, s: str) -> int:
         m = {
