@@ -1,0 +1,30 @@
+apiVersion: apps/v1 # Indicating apps version to use
+kind: StatefulSet # we are using a statefulset
+metadata:
+  name: example-statefulset # name of statefulset
+spec: #defining desired state
+  serviceName: "example" # name of headless service associated with the statefulset. Controlled from network domain for pods
+  replicas: 3 # number of replicas we want
+  selector: # match the pods contrilled by statefulset, which are 'app: example'
+    matchLabels:
+      app: example
+  template: # the pod template the will be used to create pods, including the metadata(labels)
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers: # defining the container and port opened
+      - name: example-container
+        image: example-image:latest
+        ports:
+        - containerPort: 80
+  volumeClaimTemplates: # defines a template for a persistent volume claim, in this file its a claim named 'data' with storage of '1Gi'
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 1Gi
+# would apply this file with kubectl apply -f stateful.yaml
