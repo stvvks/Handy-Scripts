@@ -11,6 +11,8 @@ module "cloudwatch_metrics" {
 }
 # End of Main.tf
 
+
+# In the child module
 # modules/cloudwatch_metrics/main.tf
 
 variable "ec2_instance_id" {
