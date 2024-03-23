@@ -28,7 +28,7 @@ def contents_of_file(filename):
     return return_string
 
     #Call function into a csv called flowers
-    print(contents_of_file("flowers.csv"))
+print(contents_of_file("flowers.csv"))
             
 
 
