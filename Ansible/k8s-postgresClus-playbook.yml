@@ -1,0 +1,65 @@
+- name: Provision GCP VMs for PostgreSQL cluster
+  hosts: pg_nodes
+  tasks:
+  - name: Ensure VMs are up and running
+    gcp_compute_instance:
+      name: "{{ item }}"
+      machine_type: "n1-standard-2"
+      image: "ubuntu-20-04"
+      state: present
+    with_items:
+    - pg-primary
+    - pg-standby1
+    - pg-standby2
+
+- name: Install PostgreSQL on primary node
+  hosts: pg_primary
+  tasks:
+  - name: Install PostgreSQL
+    apt:
+      name: postgresql
+      state: present
+
+  - name: Configure primary node
+    template:
+      src: pg_hba.conf.j2
+      dest: /etc/postgresql/13/main/pg_hba.conf
+      owner: postgres
+      group: postgres
+      mode: 0644
+    notify: Reload PostgreSQL
+
+  - name: Start PostgreSQL service
+    service:
+      name: postgresql
+      state: started
+      enabled: true
+
+- name: Configure Standby nodes
+  hosts: pg_standby
+  tasks:
+  - name: Install PostgreSQL
+    apt:
+      name: postgresql
+      state: present
+
+  - name: Configure standby node
+    template:
+      src: recovery.conf.j2
+      dest: /var/lib/postgresql/13/main/recovery.conf
+      owner: postgres
+      group: postgres
+      mode: 0644
+    notify: Reload PostgreSQL
+
+  - name: Start PostgreSQL service
+    service:
+      name: postgresql
+      state: started
+      enabled: true
+
+  handlers:
+  - name: Reload PostgreSQL
+    service:
+      name: postgresql
+      state: reloaded

@@ -1,0 +1,56 @@
+- name: Provision GCP VMs for Kubernetes cluster
+  hosts: k8s_nodes
+  tasks:
+  - name: Ensure VMs are up and running
+    gcp_compute_instance:
+      name: "{{ item }}"
+      machine_type: "n1-standard-2"
+      image: "ubuntu-20-04"
+      state: present
+    with_items:
+    - k8s-master
+    - k8s-worker1
+    - k8s-worker2
+
+- name: Install Docker on Kubernetes nodes
+  hosts: k8s_nodes
+  tasks:
+  - name: Install Docker
+    apt:
+      name: docker.io
+      state: present
+
+- name: Install Kubernetes dependencies
+  hosts: k8s_master
+  tasks:
+  - name: Install kubeadm, kubelet, and kubectl
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+- name: Initialize Kubernetes master node
+  hosts: k8s_master
+  tasks:
+  - name: Initialize kubeadm
+    command: kubeadm init --pod-network-cidr=10.244.0.0/16
+
+- name: Set up Kubernetes networking
+  hosts: k8s_master
+  tasks:
+  - name: Deploy Calico network addon
+    become: true
+    command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+- name: Join worker nodes to Kubernetes cluster
+  hosts: k8s_workers
+  tasks:
+  - name: Get join command from master
+    command: kubeadm token create --print-join-command
+    register: join_command
+
+  - name: Join worker nodes to cluster
+    command: "{{ join_command.stdout }}"
